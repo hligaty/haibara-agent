@@ -174,7 +174,7 @@ public class SwaggerDematerializerProcessor {
             }
             if (description == null || description.isEmpty()) { // The field of the tableClass does not have a description
                 // Match common table fields to obtain a description
-                String tableDescription = tableDescriptionHandler.get(getClassDescription(tableCtClass));
+                String tableDescription = getClassDescription(tableCtClass);
                 String tableName = tableCtClass.getSimpleName();
                 String fieldNameTablePrefix = tableName.substring(0, 1).toLowerCase() + tableName.substring(1);
                 description = commonFieldDefinitionMap.get(new CommonTableFieldDefinition(targetFieldTypeName, targetFieldName));
@@ -251,6 +251,7 @@ public class SwaggerDematerializerProcessor {
             MemberValue memberValue = annotation.getMemberValue(Annotations.VALUE_NAME);
             result = Optional.ofNullable(memberValue)
                     .map(m -> ((StringMemberValue) m).getValue())
+                    .map(v -> tableDescriptionHandler.get(v))
                     .orElse(null); // Obtain description from org.hibernate.annotations.Comment.value()
         }
         return result;
