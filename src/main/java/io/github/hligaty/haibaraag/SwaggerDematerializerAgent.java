@@ -20,20 +20,28 @@ public class SwaggerDematerializerAgent {
 
     private static final Logger LOG = Logger.getLogger(SwaggerDematerializerAgent.class.getName());
 
-    public static final String CLASS_LOADER_SOURCE_PARAM = "haibara.agent.class_loader_source";
-
-    private static SwaggerDematerializerProcessor swaggerDematerializerProcessor;
+    private static final String CLASS_LOADER_SOURCE_PARAM_NAME = "haibara.agent.class_loader_source";
 
     private static String classLoaderSourceClass;
 
+    private static SwaggerDematerializerProcessor swaggerDematerializerProcessor;
+
     public static void premain(String agentArgs, Instrumentation inst) {
-        classLoaderSourceClass = Optional.ofNullable(agentArgs)
-                .filter(args -> args.startsWith(CLASS_LOADER_SOURCE_PARAM))
-                .map(args -> args.substring(CLASS_LOADER_SOURCE_PARAM.length() + 1))
-                .or(() -> Optional.ofNullable(System.getProperty(CLASS_LOADER_SOURCE_PARAM)))
+        classLoaderSourceClass = getParam(agentArgs, CLASS_LOADER_SOURCE_PARAM_NAME)
                 .orElse("org.springframework.boot.SpringApplication");
         swaggerDematerializerProcessor = new SwaggerDematerializerProcessor();
         inst.addTransformer(new SwaggerDematerializeClassTransformer());
+    }
+
+    private static Optional<String> getParam(String agentArgs, String name) {
+        return Optional.ofNullable(agentArgs)
+                .filter(args -> args.contains(name))
+                .map(args -> {
+                    int beginIndex = args.indexOf(name) + name.length() + "=".length();
+                    int endIndex = args.indexOf(',', beginIndex);
+                    return args.substring(beginIndex, endIndex != -1 ? endIndex : args.length());
+                })
+                .or(() -> Optional.ofNullable(System.getProperty(name)));
     }
 
     static class SwaggerDematerializeClassTransformer implements ClassFileTransformer {

@@ -11,11 +11,11 @@ package io.github.hligaty.haibaraag.spi;
 public interface TableDescriptionHandler extends Order {
 
     /**
-     * Convert table name to displayed entity name
+     * Convert table description to displayed entity name
      *
-     * @param tableName tableName
+     * @param tableDescription table description
      * @return processed entity name
      */
-    String get(String tableName);
+    String get(String tableDescription);
 
 }

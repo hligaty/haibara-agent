@@ -1,3 +1,5 @@
+[English](README.md) | [中文](README_zh_CN.md)
+
 # HaibaraAgent
 
 <p align="center">
@@ -14,49 +16,60 @@
 
 > **Welcome to use and Star support. If you encounter problems during use,  you can raise an Issue and I will try my best to improve it**
 
-##  介绍
+## Introduce
 
-HaibaraAgent 是一个 JavaAgent，用于减少书写重复的 Swagger 和校验注解的字段说明。很多时候我们在实体类中为字段添加了数据库的列说明，然后又在各处重复书写 Swagger Schema 的 description，以及 Jakarta Validation 的各种 NotNull、NotBlank 等等注解的 message，但这些都是繁琐却必要的，HaibaraAgent 可以减少这些操作。
+This is an open-source JavaAgent designed to simplify the process of writing field descriptions in Java classes. In typical scenarios, when working with database entity classes, we need to add descriptions to the database columns and manually include Swagger Schema annotations and Jakarta Validation annotations for other classes. This process can be tedious. The goal of this JavaAgent is to reduce this repetitive task, allowing developers to focus solely on writing database column comment, while automatically generating the required descriptions for Swagger Schema and Jakarta Validation annotations.
 
-## 用法
+## Key Features
 
-启动命令：-javaagent:haibara-agent-0.0.1-beta.1.jar=haibara.agent.class_loader_source=com.example.Main，其中 haibara.agent.class_loader_source 请填写为 main 方法所在类（它作为 agent 获取扩展点以及其他资源文件的类加载器来源），也可以使用 -Dhaibara.agent.class_loader_source 参数作为输入，当前面两个参数依次无法找到时将使用默认参数 org.springframework.boot.SpringApplication。程序是 SpringBoot 应用时无需填写该参数。
+- Adding Jakarta Validation Annotation message: Improving code maintainability by automatically populating message for Jakarta Validation Annotations based on the Database Column comment  of the Fields.
+- Adding Swagger Schema Annotation description : Improving code maintainability by automatically populating description for Swagger Schema Annotation based on the Database Column comment of the Fields.
 
-### 快速入门
+## Installation and Usage
 
-在实体类中按照往常书写描述（使用 io.swagger.v3.oas.annotations.media.Schema 也可以）：
+Add the following Maven dependency:
+
+```xml
+<dependency>
+    <groupId>io.github.hligaty</groupId>
+    <artifactId>haibara-agent</artifactId>
+    <version>0.0.1-beta.1</version>
+</dependency>
+```
+
+In the entity class, write the database column comment as usual：
 
 ```java
 /**
- * org.hibernate.annotations.Comment("应用表") or
- * io.swagger.v3.oas.annotations.media.Schema(description = "应用表")
+ * org.hibernate.annotations.Comment("application") or
+ * io.swagger.v3.oas.annotations.media.Schema(description = "application")
  */
 @Data
 @Entity
 @Table(name = "application")
-@Comment("应用表")
+@Comment("application")
 public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("主键")
+    @Comment("id")
     private Long id;
 
-    @Column(name = "type", columnDefinition = "tinyint unsigned comment '类型'")
+    @Column(name = "type", columnDefinition = "tinyint unsigned comment 'type'")
     private Integer type;
 
     @Column(name = "name")
-    @Comment("名字")
+    @Comment("name")
     private String name;
 
     /**
-     * jakarta.persistence.Column(columnDefinition = "tinyint unsigned comment '状态'", ...)
-     * or org.hibernate.annotations.Comment("状态")
-     * or io.swagger.v3.oas.annotations.media.Schema(description = "状态")
+     * jakarta.persistence.Column(columnDefinition = "tinyint unsigned comment 'status'", ...)
+     * or org.hibernate.annotations.Comment("status")
+     * or io.swagger.v3.oas.annotations.media.Schema(description = "status")
      */
     @Schema(description = "状态")
-    @Column(name = "status")
     @EnumProperty(value = Status.class)
+    @Column(name = "status")
     private Integer status;
 
 }
@@ -69,11 +82,11 @@ public enum Status {
 }
 ```
 
-目标类增加 SchemaDematerializer 注解，并指定字段描述拷贝来源为上面的 Application 类。
+Add the `SchemaDematerializer` annotation to the target class, specifying that the field descriptions should be copied from the above `Application` class:
 
 ```java
 @Data
-@Schema(description = "应用请求Vo")
+@Schema(description = "Application Request Body")
 @SchemaDematerializer(Application.class)
 public class ApplicationRequestVo {
 
@@ -87,42 +100,55 @@ public class ApplicationRequestVo {
 
     @NotNull
     @Schema
-    private Integer type;
+    private Integer status;
 
 }
 ```
 
-运行时目标类将转换为如下：
+Add the following startup parameters to the startup command: 
+
+```shell
+-javaagent:haibara-agent-0.0.1-beta.1.jar
+```
+
+Optional Parameter:
+
+`haibara.agent.class_loader_source`: This parameter serves as the source of the class loader for the agent to access extension points and other resource files. By default, it is the name of the class containing the `main` method. Alternatively, you can provide the value using the system property `-Dhaibara.agent.class_loader_source`. If both the explicit parameter and system property are absent, the default value `org.springframework.boot.SpringApplication` will be used for Spring Boot applications, and there is no need to set this parameter.
+
+After startup, the description and message will be generated as follows:
 
     @Data
-    @Schema(description = "应用请求Vo")
+    @Schema(description = "Application Request Body")
     @SchemaDematerializer(Application.class)
     public class ApplicationRequestVo {
     
-        @NotNull(message = "应用表主键")
-        @Schema(description = "应用表主键不能为空")
+        @NotNull(message = "applicationid")
+        @Schema(description = "applicationidmust not be null")
         private Long id;
         
-        @NotBlank(message = "名字")
-        @Schema(description = "名字不能为空")
+        @NotBlank(message = "name")
+        @Schema(description = "namemust not be blank")
         private String name;
     
-        @NotNull(message = "类型(0-CLOSE, 1-OPEN)") // 如果字段上存在 @EnumProperty, 将生成枚举描述信息
-        @Schema(description = "类型(0-CLOSE, 1-OPEN)不能为空")
+        @NotNull(message = "status(0-CLOSE, 1-OPEN)") // 如果字段上存在 @EnumProperty, 将生成枚举描述信息
+        @Schema(description = "status(0-CLOSE, 1-OPEN)must not be null")
         private Integer type;
     
     }
 
-### 进阶
+## Extension
 
-- 公共字段：
+HaibaraAgent offers the flexibility to extend its functionality through the use of SPI (Service Provider Interface).
 
-通常表会有一些公共字段，比如名字为 id 类型为 java.lang.Long 的主键，在 Swagger 上要显示的描述应为表名加字段描述，即应用主键如果你有公共字段需要配置，那么请实现 io.github.hligaty.haibaraag.spi.CommonTableFieldDescriptionProvider 接口并为其注册 SPI（还要实现 value 方法修改优先级），默认的实现是 io.github.hligaty.haibaraag.spi.DefaultCommonTableFieldDescriptionProvider 。
+-  [CommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\CommonTableFieldDescriptionProvider.java):
 
-- 表名：
+The `SchemaDematerializer` does not copy fields from the parent class of the source class. However, common fields are usually defined in the parent class. The default provider, class  [DefaultCommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultCommonTableFieldDescriptionProvider.java), offers the 'id' field.
 
-io.github.hligaty.haibaraag.spi.TableDescriptionHandler 用于处理表描述，比如去掉“应用表”的“表”，默认不做处理
+-   [TableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\TableDescriptionHandler.java),   [EnumDescriptionFactory](src\main\java\io\github\hligaty\haibaraag\spi\EnumDescriptionFactory.java):
 
-- 枚举：
+TableDescriptionHandler and EnumDescriptionFactory are used for post-processing the obtained table descriptions and generating enum descriptions, respectively. The default implementations are  [DefaultTableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\DefaultTableDescriptionHandler.java) and  [DefaultEnumDescriptionFactory](src\main\java\io\github\hligaty\haibaraag\spi\DefaultEnumDescriptionFactory.java).
 
-io.github.hligaty.haibaraag.spi.EnumDescriptionFactory 用于生成枚举描述，默认为 io.github.hligaty.haibaraag.spi.DefaultEnumDescriptionFactory，格式为(0-枚举一name, 1-枚举二name, ...)
+-  [ValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\ValidationAnnotationDefinitionProvider.java)：
+
+Used for registering custom validation annotations. For the list of supported default annotations, please refer to  [DefaultValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultValidationAnnotationDefinitionProvider.java).
+

@@ -273,12 +273,12 @@ public class SwaggerDematerializerProcessor {
 
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctField.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
         for (Annotation annotation : attribute.getAnnotations()) {
-            String messageSuffix = validationAnnotationDefinitionMap.get(annotation.getTypeName());
-            if (messageSuffix != null
+            String message = validationAnnotationDefinitionMap.get(annotation.getTypeName());
+            if (message != null
                 && annotation.getMemberValue(Annotations.JakartaValidation.MESSAGE_NAME) == null) {
                 annotation.addMemberValue(
                         Annotations.JakartaValidation.MESSAGE_NAME,
-                        new StringMemberValue(description + messageSuffix, constPool)
+                        new StringMemberValue(description + message, constPool)
                 );
                 attribute.addAnnotation(annotation);
             }

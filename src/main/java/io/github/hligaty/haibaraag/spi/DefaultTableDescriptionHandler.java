@@ -6,8 +6,8 @@ package io.github.hligaty.haibaraag.spi;
 public class DefaultTableDescriptionHandler implements TableDescriptionHandler {
 
     @Override
-    public String get(String tableName) {
-        return tableName;
+    public String get(String tableDescription) {
+        return tableDescription;
     }
 
 }
