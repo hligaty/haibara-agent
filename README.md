@@ -67,7 +67,7 @@ public class Application {
      * or org.hibernate.annotations.Comment("status")
      * or io.swagger.v3.oas.annotations.media.Schema(description = "status")
      */
-    @Schema(description = "状态")
+    @Schema(description = "status")
     @EnumProperty(value = Status.class)
     @Column(name = "status")
     private Integer status;
@@ -130,7 +130,7 @@ After startup, the description and message will be generated as follows:
         @Schema(description = "namemust not be blank")
         private String name;
     
-        @NotNull(message = "status(0-CLOSE, 1-OPEN)") // 如果字段上存在 @EnumProperty, 将生成枚举描述信息
+        @NotNull(message = "status(0-CLOSE, 1-OPEN)") // If @EnumProperty exists on the field, enumeration description information will be generated
         @Schema(description = "status(0-CLOSE, 1-OPEN)must not be null")
         private Integer type;
     
