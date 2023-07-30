@@ -138,14 +138,14 @@ public class ApplicationRequestVo {
 
 HaibaraAgent通过使用SPI（服务提供商接口）提供了扩展其功能的灵活性。
 
--  [CommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\CommonTableFieldDescriptionProvider.java):
+-  [CommonTableFieldDescriptionProvider](src/main/java/io/github/hligaty/haibaraag/spi/CommonTableFieldDescriptionProvider.java):
 
-`SchemaDematerializer` 不会从源类的父类复制字段。但是，公共字段通常是在父类中定义的。默认提供程序类[DefaultCommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultCommonTableFieldDescriptionProvider.java) 提供“id”字段。
+`SchemaDematerializer` 不会从源类的父类复制字段。但是，公共字段通常是在父类中定义的。默认提供程序类[DefaultCommonTableFieldDescriptionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultCommonTableFieldDescriptionProvider.java) 提供“id”字段。
 
--   [TableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\TableDescriptionHandler.java),   [EnumDescriptionFactory](src\main\java\io\github\hligaty\haibaraag\spi\EnumDescriptionFactory.java):
+-   [TableDescriptionHandler](src/main/java/io/github/hligaty/haibaraag/spi/TableDescriptionHandler.java),   [EnumDescriptionFactory](src/main/java/io/github/hligaty/haibaraag/spi/EnumDescriptionFactory.java):
 
-TableDescriptionHandler和EnumDescriptionFactory分别用于对获得的表描述进行后处理和生成枚举描述。默认的实现是[DefaultTableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\DefaultTableDescriptationHandler.java)和[DefaultEnumDescriptionFactory](srg\main\java\io\github\hlegaty\haibaraag\spi\DfaultEnumDescriptationFactory.java)。
+TableDescriptionHandler和EnumDescriptionFactory分别用于对获得的表描述进行后处理和生成枚举描述。默认的实现是[DefaultTableDescriptionHandler](src/main/java/io/github/hligaty/haibaraag/spi/DefaultTableDescriptationHandler.java)和[DefaultEnumDescriptionFactory](srg/main/java/io/github/hlegaty/haibaraag/spi/DfaultEnumDescriptationFactory.java)。
 
--  [ValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\ValidationAnnotationDefinitionProvider.java)：
+-  [ValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/ValidationAnnotationDefinitionProvider.java)：
 
-用于注册自定义校验注解。有关支持的默认注释列表，请参阅[DefaultValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultValidationAnnotationDefinitionProvider.java)。
+用于注册自定义校验注解。有关支持的默认注释列表，请参阅[DefaultValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultValidationAnnotationDefinitionProvider.java)。
