@@ -140,15 +140,15 @@ After startup, the description and message will be generated as follows:
 
 HaibaraAgent offers the flexibility to extend its functionality through the use of SPI (Service Provider Interface).
 
--  [CommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\CommonTableFieldDescriptionProvider.java):
+-  [CommonTableFieldDescriptionProvider](src/main/java/io/github/hligaty/haibaraag/spi/CommonTableFieldDescriptionProvider.java):
 
-The `SchemaDematerializer` does not copy fields from the parent class of the source class. However, common fields are usually defined in the parent class. The default provider, class  [DefaultCommonTableFieldDescriptionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultCommonTableFieldDescriptionProvider.java), offers the 'id' field.
+The `SchemaDematerializer` does not copy fields from the parent class of the source class. However, common fields are usually defined in the parent class. The default provider, class  [DefaultCommonTableFieldDescriptionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultCommonTableFieldDescriptionProvider.java), offers the 'id' field.
 
--   [TableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\TableDescriptionHandler.java),   [EnumDescriptionFactory](src\main\java\io\github\hligaty\haibaraag\spi\EnumDescriptionFactory.java):
+-   [TableDescriptionHandler](src/main/java/io/github/hligaty/haibaraag/spi/TableDescriptionHandler.java),   [EnumDescriptionFactory](src/main/java/io/github/hligaty/haibaraag/spi/EnumDescriptionFactory.java):
 
-TableDescriptionHandler and EnumDescriptionFactory are used for post-processing the obtained table descriptions and generating enum descriptions, respectively. The default implementations are  [DefaultTableDescriptionHandler](src\main\java\io\github\hligaty\haibaraag\spi\DefaultTableDescriptionHandler.java) and  [DefaultEnumDescriptionFactory](src\main\java\io\github\hligaty\haibaraag\spi\DefaultEnumDescriptionFactory.java).
+TableDescriptionHandler and EnumDescriptionFactory are used for post-processing the obtained table descriptions and generating enum descriptions, respectively. The default implementations are  [DefaultTableDescriptionHandler](src/main/java/io/github/hligaty/haibaraag/spi/DefaultTableDescriptionHandler.java) and  [DefaultEnumDescriptionFactory](src/main/java/io/github/hligaty/haibaraag/spi/DefaultEnumDescriptionFactory.java).
 
--  [ValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\ValidationAnnotationDefinitionProvider.java)：
+-  [ValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/ValidationAnnotationDefinitionProvider.java)：
 
-Used for registering custom validation annotations. For the list of supported default annotations, please refer to  [DefaultValidationAnnotationDefinitionProvider](src\main\java\io\github\hligaty\haibaraag\spi\DefaultValidationAnnotationDefinitionProvider.java).
+Used for registering custom validation annotations. For the list of supported default annotations, please refer to  [DefaultValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultValidationAnnotationDefinitionProvider.java).
 
