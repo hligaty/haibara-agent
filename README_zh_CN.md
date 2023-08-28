@@ -149,3 +149,8 @@ TableDescriptionHandler和EnumDescriptionFactory分别用于对获得的表描�
 -  [ValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/ValidationAnnotationDefinitionProvider.java)：
 
 用于注册自定义校验注解。有关支持的默认注释列表，请参阅[DefaultValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultValidationAnnotationDefinitionProvider.java)。
+
+## 路线图
+
+- 支持数据库实体类字段为枚举类型时不必使用 @EnumProperty 标注
+- 支持方法参数上的注释生成

@@ -152,3 +152,7 @@ TableDescriptionHandler and EnumDescriptionFactory are used for post-processing 
 
 Used for registering custom validation annotations. For the list of supported default annotations, please refer to  [DefaultValidationAnnotationDefinitionProvider](src/main/java/io/github/hligaty/haibaraag/spi/DefaultValidationAnnotationDefinitionProvider.java).
 
+## Roadmap
+
+- Supports database entity class enumeration types instead of @ EnumProperty annotations
+- Support annotation generation on method parameters
