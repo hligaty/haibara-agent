@@ -110,7 +110,7 @@ public class SwaggerDematerializerProcessor {
         try {
             List<String> tableClassNameList = Optional.ofNullable((AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag))
                     .map(annotationsAttribute -> annotationsAttribute.getAnnotation(SchemaDematerializer.class.getName()))
-                    .map(annotation -> (ArrayMemberValue) annotation.getMemberValue(Annotations.VALUE_NAME))
+                    .map(annotation -> (ArrayMemberValue) annotation.getMemberValue(AnnotationMetadata.VALUE_NAME))
                     .map(ArrayMemberValue::getValue).stream()
                     .flatMap(Arrays::stream)
                     .map(memberValue -> ((ClassMemberValue) memberValue).getValue())
@@ -133,8 +133,8 @@ public class SwaggerDematerializerProcessor {
             throws ClassNotFoundException, NotFoundException {
         Optional<MemberValue> memberValue = Optional.ofNullable(ctField.getFieldInfo())
                 .map(fieldInfo -> (AnnotationsAttribute) fieldInfo.getAttribute(AnnotationsAttribute.visibleTag))
-                .map(annotationsAttribute -> annotationsAttribute.getAnnotation(Annotations.Swagger.Schema.CLASS_NAME))
-                .map(annotation -> annotation.getMemberValue(Annotations.Swagger.Schema.DESCRIPTION_NAME));
+                .map(annotationsAttribute -> annotationsAttribute.getAnnotation(AnnotationMetadata.Swagger.Schema.CLASS_NAME))
+                .map(annotation -> annotation.getMemberValue(AnnotationMetadata.Swagger.Schema.DESCRIPTION_NAME));
         if (memberValue.isPresent()) { // Swagger Schema has description information
             retransformValidationAnnotation(ctClass, ctField, ((StringMemberValue) memberValue.get()).getValue());
             return;
@@ -200,20 +200,20 @@ public class SwaggerDematerializerProcessor {
 
     private String getFieldDescription(CtField ctField) throws ClassNotFoundException {
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctField.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
-        String result = Optional.ofNullable(attribute.getAnnotation(Annotations.Swagger.Schema.CLASS_NAME))
-                .map(annotation -> annotation.getMemberValue(Annotations.Swagger.Schema.DESCRIPTION_NAME))
+        String result = Optional.ofNullable(attribute.getAnnotation(AnnotationMetadata.Swagger.Schema.CLASS_NAME))
+                .map(annotation -> annotation.getMemberValue(AnnotationMetadata.Swagger.Schema.DESCRIPTION_NAME))
                 .map(memberValue -> ((StringMemberValue) memberValue).getValue())
                 .orElse(null); // Obtain description from io.swagger.v3.oas.annotations.media.Schema.description()
         if (result == null) {
-            result = Optional.ofNullable(attribute.getAnnotation(Annotations.JakartaPersistence.Column.CLASS_NAME))
-                    .map(annotation -> annotation.getMemberValue(Annotations.JakartaPersistence.Column.COLUMN_DEFINITION_NAME))
+            result = Optional.ofNullable(attribute.getAnnotation(AnnotationMetadata.JakartaPersistence.Column.CLASS_NAME))
+                    .map(annotation -> annotation.getMemberValue(AnnotationMetadata.JakartaPersistence.Column.COLUMN_DEFINITION_NAME))
                     .map(memberValue -> ((StringMemberValue) memberValue).getValue())
                     .map(this::getJakartaPersistenceColumnDefinitionComment)
                     .orElse(null); // Obtain description from jakarta.persistence.Column.columnDefinition()
         }
         if (result == null) {
-            result = Optional.ofNullable(attribute.getAnnotation(Annotations.Hibernate.Comment.CLASS_NAME))
-                    .map(annotation -> annotation.getMemberValue(Annotations.VALUE_NAME))
+            result = Optional.ofNullable(attribute.getAnnotation(AnnotationMetadata.Hibernate.Comment.CLASS_NAME))
+                    .map(annotation -> annotation.getMemberValue(AnnotationMetadata.VALUE_NAME))
                     .map(memberValue -> ((StringMemberValue) memberValue).getValue())
                     .orElse(null); // Obtain description from org.hibernate.annotations.Comment.value()
         }
@@ -242,13 +242,13 @@ public class SwaggerDematerializerProcessor {
     private String getClassDescription(CtClass ctClass) {
         ClassFile classFile = ctClass.getClassFile();
         AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
-        String result = Optional.ofNullable(attribute.getAnnotation(Annotations.Swagger.Schema.CLASS_NAME))
-                .map(annotation -> annotation.getMemberValue(Annotations.Swagger.Schema.DESCRIPTION_NAME))
+        String result = Optional.ofNullable(attribute.getAnnotation(AnnotationMetadata.Swagger.Schema.CLASS_NAME))
+                .map(annotation -> annotation.getMemberValue(AnnotationMetadata.Swagger.Schema.DESCRIPTION_NAME))
                 .map(memberValue -> ((StringMemberValue) memberValue).getValue())
                 .orElse(null); // Obtain table name from io.swagger.v3.oas.annotations.media.Schema.description()
         if (result == null) {
-            Annotation annotation = attribute.getAnnotation(Annotations.Hibernate.Comment.CLASS_NAME);
-            MemberValue memberValue = annotation.getMemberValue(Annotations.VALUE_NAME);
+            Annotation annotation = attribute.getAnnotation(AnnotationMetadata.Hibernate.Comment.CLASS_NAME);
+            MemberValue memberValue = annotation.getMemberValue(AnnotationMetadata.VALUE_NAME);
             result = Optional.ofNullable(memberValue)
                     .map(m -> ((StringMemberValue) m).getValue())
                     .map(v -> tableDescriptionHandler.get(v))
@@ -262,8 +262,8 @@ public class SwaggerDematerializerProcessor {
         ConstPool constPool = classFile.getConstPool();
 
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctField.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
-        Annotation annotation = attribute.getAnnotation(Annotations.Swagger.Schema.CLASS_NAME);
-        annotation.addMemberValue(Annotations.Swagger.Schema.DESCRIPTION_NAME, new StringMemberValue(description, constPool));
+        Annotation annotation = attribute.getAnnotation(AnnotationMetadata.Swagger.Schema.CLASS_NAME);
+        annotation.addMemberValue(AnnotationMetadata.Swagger.Schema.DESCRIPTION_NAME, new StringMemberValue(description, constPool));
         attribute.addAnnotation(annotation);
     }
 
@@ -275,9 +275,9 @@ public class SwaggerDematerializerProcessor {
         for (Annotation annotation : attribute.getAnnotations()) {
             String message = validationAnnotationDefinitionMap.get(annotation.getTypeName());
             if (message != null
-                && annotation.getMemberValue(Annotations.JakartaValidation.MESSAGE_NAME) == null) {
+                && annotation.getMemberValue(AnnotationMetadata.JakartaValidation.MESSAGE_NAME) == null) {
                 annotation.addMemberValue(
-                        Annotations.JakartaValidation.MESSAGE_NAME,
+                        AnnotationMetadata.JakartaValidation.MESSAGE_NAME,
                         new StringMemberValue(description + message, constPool)
                 );
                 attribute.addAnnotation(annotation);

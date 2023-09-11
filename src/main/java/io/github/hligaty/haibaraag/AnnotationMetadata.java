@@ -1,6 +1,6 @@
 package io.github.hligaty.haibaraag;
 
-public interface Annotations {
+public interface AnnotationMetadata {
 
     String VALUE_NAME = "value";
 
